@@ -1,0 +1,510 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CLIENT
+  REPAIRER
+  ADMIN
+}
+
+enum RepairCategory {
+  ELECTRONICS
+  FURNITURE
+  CLOTHING
+  BIKES
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  MATCHED
+  QUOTED
+  BOOKED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum UrgencyLevel {
+  NORMAL
+  URGENT
+}
+
+enum PickupOption {
+  DROP_OFF
+  PICKUP_DELIVERY
+}
+
+enum EscrowStatus {
+  NOT_REQUIRED
+  PENDING
+  HELD
+  RELEASED
+  REFUNDED
+  PARTIAL_REFUND
+}
+
+enum QuoteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum WarrantyType {
+  NONE
+  DAYS_7
+  DAYS_30
+  CUSTOM
+}
+
+enum VerificationStatus {
+  NOT_SUBMITTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED_FOR_CLIENT
+  RESOLVED_FOR_REPAIRER
+  CLOSED
+}
+
+enum PostType {
+  TUTORIAL
+  QUESTION
+  EVENT
+}
+
+enum EventType {
+  WORKSHOP
+  FIX_DAY
+  COMMUNITY_MEETUP
+}
+
+model User {
+  id                String               @id @default(cuid())
+  email             String               @unique
+  fullName          String
+  hashedPassword    String?
+  phone             String?
+  role              UserRole             @default(CLIENT)
+  onboardingCompleted Boolean            @default(false)
+  avatarUrl         String?
+  isActive          Boolean              @default(true)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  profile           UserProfile?
+  clientJobs        RepairJob[]          @relation("ClientJobs")
+  repairerProfile   RepairerProfile?
+  quotes            JobQuote[]
+  reviewsGiven      Review[]             @relation("Reviewer")
+  reviewsReceived   Review[]             @relation("ReviewTarget")
+  escrowPayments    EscrowPayment[]      @relation("EscrowClient")
+  disputesFiled     Dispute[]            @relation("DisputeFiledBy")
+  disputesAssigned  Dispute[]            @relation("DisputeAssignedTo")
+  rewardWallet      RewardWallet?
+  rewardEvents      RewardEvent[]
+  forumPosts        CommunityPost[]      @relation("PostAuthor")
+  forumAnswers      CommunityAnswer[]
+  eventRegistrations EventRegistration[]
+  workshopEvents    CommunityEvent[]     @relation("EventOrganizer")
+}
+
+model UserProfile {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  suburb         String
+  postcode       String
+  streetAddress  String?
+  latitude       Float?
+  longitude      Float?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RepairerProfile {
+  id                     String             @id @default(cuid())
+  userId                 String             @unique
+  businessName           String?
+  bio                    String?
+  yearsExperience        Int                @default(0)
+  avgRating              Float              @default(0)
+  totalReviews           Int                @default(0)
+  verificationStatus     VerificationStatus @default(NOT_SUBMITTED)
+  skillCertificationUrl  String?
+  idDocumentUrl          String?
+  pickupDeliverySupported Boolean           @default(false)
+  emergencyRepairSupported Boolean          @default(false)
+  defaultWarrantyType    WarrantyType       @default(NONE)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories           RepairerCategory[]
+  quotes               JobQuote[]
+  warranties           WarrantyOffer[]
+  pickupZones          RepairerPickupZone[]
+  jobs                 RepairJob[]
+  earningsSnapshots    RepairerEarningsSnapshot[]
+}
+
+model RepairerCategory {
+  id                String         @id @default(cuid())
+  repairerProfileId String
+  category          RepairCategory
+  expertiseLevel    Int            @default(1)
+  createdAt         DateTime       @default(now())
+
+  repairerProfile RepairerProfile @relation(fields: [repairerProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([repairerProfileId, category])
+  @@index([category])
+}
+
+model RepairerPickupZone {
+  id                String    @id @default(cuid())
+  repairerProfileId String
+  suburb            String
+  maxDistanceKm     Float     @default(10)
+  createdAt         DateTime  @default(now())
+
+  repairerProfile RepairerProfile @relation(fields: [repairerProfileId], references: [id], onDelete: Cascade)
+
+  @@index([suburb])
+}
+
+model RepairJob {
+  id                    String         @id @default(cuid())
+  clientId              String
+  assignedRepairerId    String?
+  title                 String
+  description           String
+  category              RepairCategory
+  status                JobStatus      @default(DRAFT)
+  urgency               UrgencyLevel   @default(NORMAL)
+  pickupOption          PickupOption   @default(DROP_OFF)
+  suburb                String
+  postcode              String
+  latitude              Float?
+  longitude             Float?
+  requestedAt           DateTime?
+  bookedAt              DateTime?
+  completedAt           DateTime?
+  estimatedCostMin      Decimal?       @db.Decimal(10, 2)
+  estimatedCostMax      Decimal?       @db.Decimal(10, 2)
+  finalCost             Decimal?       @db.Decimal(10, 2)
+  currency              String         @default("AUD")
+  aiDamageSummary       String?
+  aiConfidence          Float?
+  aiRepairVsReplaceHint String?
+  marketPriceEstimate   Decimal?       @db.Decimal(10, 2)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  client            User             @relation("ClientJobs", fields: [clientId], references: [id], onDelete: Cascade)
+  assignedRepairer  RepairerProfile? @relation(fields: [assignedRepairerId], references: [id], onDelete: SetNull)
+  images            JobImage[]
+  quotes            JobQuote[]
+  escrowPayment     EscrowPayment?
+  warrantyClaim     WarrantyClaim?
+  sustainability    SustainabilityImpact?
+  reviews           Review[]
+  disputes          Dispute[]
+  history           RepairHistoryEvent[]
+
+  @@index([clientId, createdAt])
+  @@index([category, suburb, status])
+  @@index([status, urgency])
+}
+
+model JobImage {
+  id          String    @id @default(cuid())
+  repairJobId String
+  imageUrl    String
+  mimeType    String?
+  fileSizeKb  Int?
+  createdAt   DateTime  @default(now())
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+
+  @@index([repairJobId])
+}
+
+model JobQuote {
+  id                String      @id @default(cuid())
+  repairJobId       String
+  repairerProfileId String
+  submittedByUserId String
+  status            QuoteStatus @default(PENDING)
+  amount            Decimal     @db.Decimal(10, 2)
+  currency          String      @default("AUD")
+  estimatedDays     Int?
+  message           String?
+  warrantyType      WarrantyType @default(NONE)
+  customWarrantyDays Int?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  repairJob       RepairJob       @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+  repairerProfile RepairerProfile @relation(fields: [repairerProfileId], references: [id], onDelete: Cascade)
+  submittedByUser User            @relation(fields: [submittedByUserId], references: [id], onDelete: Cascade)
+
+  @@unique([repairJobId, repairerProfileId])
+  @@index([repairJobId, status])
+}
+
+model EscrowPayment {
+  id               String       @id @default(cuid())
+  repairJobId      String       @unique
+  clientId         String
+  providerName     String       @default("STRIPE_TEST")
+  providerPaymentId String?
+  status           EscrowStatus @default(PENDING)
+  amountHeld       Decimal      @db.Decimal(10, 2)
+  amountReleased   Decimal?     @db.Decimal(10, 2)
+  amountRefunded   Decimal?     @db.Decimal(10, 2)
+  currency         String       @default("AUD")
+  heldAt           DateTime?
+  releasedAt       DateTime?
+  refundedAt       DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+  client    User      @relation("EscrowClient", fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+model WarrantyOffer {
+  id                String       @id @default(cuid())
+  repairerProfileId String
+  warrantyType      WarrantyType
+  customDays        Int?
+  termsText         String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  repairerProfile RepairerProfile @relation(fields: [repairerProfileId], references: [id], onDelete: Cascade)
+
+  @@index([repairerProfileId])
+}
+
+model WarrantyClaim {
+  id            String        @id @default(cuid())
+  repairJobId   String        @unique
+  reason        String
+  status        DisputeStatus @default(OPEN)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+}
+
+model Dispute {
+  id                 String        @id @default(cuid())
+  repairJobId        String
+  filedByUserId      String
+  assignedAdminId    String?
+  status             DisputeStatus @default(OPEN)
+  reasonCode         String
+  description        String
+  resolutionSummary  String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  repairJob      RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+  filedByUser    User      @relation("DisputeFiledBy", fields: [filedByUserId], references: [id], onDelete: Cascade)
+  assignedAdmin  User?     @relation("DisputeAssignedTo", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([repairJobId])
+}
+
+model Review {
+  id              String    @id @default(cuid())
+  repairJobId     String
+  reviewerUserId  String
+  targetUserId    String
+  rating          Int
+  comment         String?
+  createdAt       DateTime  @default(now())
+
+  repairJob   RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+  reviewer    User      @relation("Reviewer", fields: [reviewerUserId], references: [id], onDelete: Cascade)
+  targetUser  User      @relation("ReviewTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@unique([repairJobId, reviewerUserId])
+  @@index([targetUserId, createdAt])
+}
+
+model SustainabilityImpact {
+  id                 String    @id @default(cuid())
+  repairJobId        String    @unique
+  wasteDivertedKg    Decimal   @db.Decimal(10, 2)
+  co2SavedKg         Decimal   @db.Decimal(10, 2)
+  moneySavedAud      Decimal?  @db.Decimal(10, 2)
+  calculationMethod  String
+  createdAt          DateTime  @default(now())
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+}
+
+model RewardWallet {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  points       Int      @default(0)
+  tier         String?  @default("BRONZE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events RewardEvent[]
+}
+
+model RewardEvent {
+  id              String    @id @default(cuid())
+  userId          String
+  rewardWalletId  String
+  pointsDelta     Int
+  reason          String
+  referenceType   String?
+  referenceId     String?
+  createdAt       DateTime  @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rewardWallet RewardWallet @relation(fields: [rewardWalletId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model DonationPartner {
+  id           String    @id @default(cuid())
+  name         String
+  type         String
+  websiteUrl   String?
+  suburb       String
+  address      String?
+  latitude     Float?
+  longitude    Float?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+}
+
+model RecyclingCenter {
+  id           String    @id @default(cuid())
+  name         String
+  acceptedCategories String
+  suburb       String
+  address      String?
+  websiteUrl   String?
+  latitude     Float?
+  longitude    Float?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+}
+
+model CommunityPost {
+  id           String    @id @default(cuid())
+  authorId     String
+  postType     PostType
+  title        String
+  body         String
+  tags         String?
+  isPinned     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  author  User               @relation("PostAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  answers CommunityAnswer[]
+
+  @@index([postType, createdAt])
+}
+
+model CommunityAnswer {
+  id           String    @id @default(cuid())
+  postId       String
+  authorId     String
+  body         String
+  upvotes      Int       @default(0)
+  createdAt    DateTime  @default(now())
+
+  post   CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+}
+
+model CommunityEvent {
+  id             String     @id @default(cuid())
+  organizerId    String
+  eventType      EventType
+  title          String
+  description    String
+  suburb         String
+  venueAddress   String
+  startsAt       DateTime
+  endsAt         DateTime?
+  maxAttendees   Int?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organizer     User               @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: Cascade)
+  registrations EventRegistration[]
+
+  @@index([startsAt, suburb])
+}
+
+model EventRegistration {
+  id             String    @id @default(cuid())
+  communityEventId String
+  userId         String
+  createdAt      DateTime  @default(now())
+
+  communityEvent CommunityEvent @relation(fields: [communityEventId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([communityEventId, userId])
+}
+
+model RepairHistoryEvent {
+  id          String    @id @default(cuid())
+  repairJobId String
+  eventType   String
+  eventNote   String?
+  actorUserId String?
+  createdAt   DateTime  @default(now())
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [id], onDelete: Cascade)
+
+  @@index([repairJobId, createdAt])
+}
+
+model RepairerEarningsSnapshot {
+  id                String    @id @default(cuid())
+  repairerProfileId String
+  periodStart       DateTime
+  periodEnd         DateTime
+  jobsCompleted     Int       @default(0)
+  grossEarningsAud  Decimal   @db.Decimal(12, 2)
+  averageTicketAud  Decimal?  @db.Decimal(10, 2)
+  createdAt         DateTime  @default(now())
+
+  repairerProfile RepairerProfile @relation(fields: [repairerProfileId], references: [id], onDelete: Cascade)
+
+  @@index([repairerProfileId, periodStart])
+}

@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepairHub — Repair. Reuse. Reconnect.</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==================== DESIGN SYSTEM ==================== */
+:root {
+  --cream:        #F6F3EE;
+  --cream-2:      #EDE8DF;
+  --cream-3:      #E3DDD2;
+  --green:        #1D4B20;
+  --green-mid:    #2A6430;
+  --green-soft:   #3F8447;
+  --green-light:  #E6EFE7;
+  --green-border: #B8D4BA;
+  --amber:        #B35A1E;
+  --amber-mid:    #D06D28;
+  --amber-light:  #F4E8DC;
+  --amber-border: #E0B899;
+  --blue:         #1A4568;
+  --blue-light:   #E2EDF6;
+  --blue-border:  #A8C5DC;
+  --ink:          #1A1916;
+  --ink-60:       #585650;
+  --ink-40:       #8F8D87;
+  --ink-20:       #C9C7C1;
+  --card:         #FDFCF9;
+  --white:        #FFFFFF;
+  --shadow-sm:    0 1px 3px rgba(26,25,22,.06), 0 1px 2px rgba(26,25,22,.04);
+  --shadow-md:    0 4px 12px rgba(26,25,22,.08), 0 2px 4px rgba(26,25,22,.04);
+  --shadow-lg:    0 12px 32px rgba(26,25,22,.10), 0 4px 8px rgba(26,25,22,.04);
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --radius-full:  9999px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --transition:   all .2s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== PAGE WRAPPER ==================== */
+.app-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+@media(max-width:640px){ .app-wrap { padding: 0 16px 60px; } }
+
+/* ==================== NAV TABS ==================== */
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 0 0;
+  margin-bottom: 0;
+  border-bottom: 1.5px solid var(--cream-3);
+  position: sticky;
+  top: 0;
+  background: var(--cream);
+  z-index: 100;
+}
+.page-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border: none;
+  background: transparent;
+  color: var(--ink-60);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  bottom: -1.5px;
+  border-bottom: 2px solid transparent;
+}
+.page-tab:hover { color: var(--ink); background: var(--cream-2); }
+.page-tab.active {
+  color: var(--green);
+  border-bottom: 2px solid var(--green);
+  background: transparent;
+}
+.page-tab svg { opacity: .6; }
+.page-tab.active svg { opacity: 1; }
+
+/* ==================== PAGES ==================== */
+.page { display: none; padding: 40px 0 0; animation: fadeIn .3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ==================== TYPOGRAPHY ==================== */
+.display { font-family: var(--font-display); font-weight: 500; line-height: 1.08; letter-spacing: -.02em; }
+.heading { font-family: var(--font-display); font-weight: 500; line-height: 1.2; }
+.overline { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-40); }
+.body-sm { font-size: 13px; color: var(--ink-60); line-height: 1.65; }
+.body-xs { font-size: 12px; color: var(--ink-60); line-height: 1.5; }
+
+/* ==================== BUTTONS ==================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--cream-3); }
+.btn-outline:hover { border-color: var(--ink-20); background: var(--card); }
+.btn-ghost { background: transparent; color: var(--ink-60); border: none; }
+.btn-ghost:hover { color: var(--ink); background: var(--cream-2); }
+.btn-amber { background: var(--amber); color: #fff; }
+.btn-amber:hover { background: #9e4f1a; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-sm { padding: 6px 13px; font-size: 12px; }
+.btn-lg { padding: 13px 28px; font-size: 15px; border-radius: var(--radius-lg); }
+.btn-full { width: 100%; }
+
+/* ==================== BADGES ==================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-green { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.badge-amber { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-blue  { background: var(--blue-light);  color: var(--blue);  border: 1px solid var(--blue-border); }
+.badge-gray  { background: var(--cream-2); color: var(--ink-60); border: 1px solid var(--cream-3); }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+
+/* ==================== CARDS ==================== */
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition);
+}
+.card-hover:hover { border-color: var(--green-border); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-green { background: var(--green-light); border-color: var(--green-border); }
+.card-amber { background: var(--amber-light); border-color: var(--amber-border); }
+.card-cream { background: var(--cream-2); border-color: var(--cream-3); }
+
+/* ==================== GRID ==================== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.grid-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; align-items: center; }
+.grid-dash { display: grid; grid-template-columns: 7fr 5fr; gap: 28px; align-items: start; }
+@media(max-width:900px) {
+  .grid-hero, .grid-dash { grid-template-columns: 1fr; gap: 32px; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:600px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ==================== AVATAR ==================== */
+.avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+  background: var(--green-light);
+  color: var(--green);
+}
+.avatar-sm  { width: 32px; height: 32px; font-size: 11px; }
+.avatar-md  { width: 42px; height: 42px; font-size: 14px; }
+.avatar-lg  { width: 52px; height: 52px; font-size: 16px; }
+.avatar-amber { background: var(--amber-light); color: var(--amber); }
+.avatar-blue  { background: var(--blue-light); color: var(--blue); }
+
+/* ==================== DIVIDER ==================== */
+.div { border: none; border-top: 1.5px solid var(--cream-3); margin: 14px 0; }
+
+/* ==================== PROGRESS ==================== */
+.progress { height: 6px; background: var(--cream-3); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; }
+.progress-green { background: var(--green); }
+.progress-amber { background: var(--amber-mid); }
+
+/* ==================== CHIPS ==================== */
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--cream-2);
+  border: 1px solid var(--cream-3);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  color: var(--ink-60);
+  font-weight: 500;
+}
+
+/* ==================== FORM ELEMENTS ==================== */
+.field-group { margin-bottom: 14px; }
+.field-label { display: block; font-size: 11px; font-weight: 600; color: var(--ink-60); margin-bottom: 5px; letter-spacing: .03em; text-transform: uppercase; }
+.field-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 10px 13px;
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  transition: var(--transition);
+  outline: none;
+}
+.field-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,75,32,.1); }
+.field-input::placeholder { color: var(--ink-40); }
+textarea.field-input { resize: vertical; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:600px){ .field-row { grid-template-columns: 1fr; } }
+
+/* ==================== UPLOAD ZONE ==================== */
+.upload-zone {
+  border: 2px dashed var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  text-align: center;
+  background: var(--green-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.upload-zone:hover { border-color: var(--green); background: rgba(230,239,231,.7); }
+
+/* ==================== TABLE ==================== */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-40);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 12px 14px;
+  border-bottom: 1.5px solid var(--cream-3);
+}
+.data-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--cream-2);
+  color: var(--ink);
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--cream-2); }
+
+/* ==================== STEP INDICATOR ==================== */
+.steps-nav {
+  display: flex;
+  align-items: center;
+  margin-bottom: 36px;
+  gap: 0;
+}
+.step-node { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  transition: var(--transition);
+}
+.step-done  { background: var(--green); color: #fff; }
+.step-cur   { background: var(--green); color: #fff; box-shadow: 0 0 0 4px var(--green-light); }
+.step-todo  { background: var(--cream-2); color: var(--ink-40); border: 1.5px solid var(--cream-3); }
+.step-label { font-size: 10px; font-weight: 600; color: var(--ink-40); text-align: center; white-space: nowrap; }
+.step-label.active-label { color: var(--green); }
+.step-connector { flex: 1; height: 1.5px; background: var(--cream-3); margin-bottom: 18px; }
+.step-connector.done { background: var(--green); }
+
+/* ==================== AI CARD ==================== */
+.ai-card {
+  background: linear-gradient(135deg, var(--green-light) 0%, #d4e8d5 100%);
+  border: 1.5px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+}
+
+/* ==================== STAT CARD ==================== */
+.stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.stat-value { font-family: var(--font-display); font-size: 2rem; font-weight: 500; color: var(--ink); line-height: 1; }
+.stat-label { font-size: 11px; font-weight: 600; color: var(--ink-40); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+.stat-delta { font-size: 11px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 3px; margin-top: 6px; }
+
+/* ==================== IMPACT BANNER ==================== */
+.impact-banner {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 60%, #4a9550 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px 44px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.impact-banner::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  top: -80px;
+  right: -60px;
+}
+.impact-banner::after {
+  content: '';
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  bottom: -50px;
+  left: 40%;
+}
+
+/* ==================== HERO ==================== */
+.hero-section {
+  padding: 52px 0 48px;
+  position: relative;
+}
+.hero-bg-blob {
+  position: absolute;
+  top: -20px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  pointer-events: none;
+  opacity: .35;
+  animation: blobFloat 10s ease-in-out infinite;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.03); }
+}
+.hero-label { margin-bottom: 16px; }
+.hero-headline { font-size: clamp(2.8rem, 5vw, 4rem); margin-bottom: 16px; color: var(--ink); }
+.hero-sub { max-width: 440px; margin-bottom: 28px; font-size: 15px; color: var(--ink-60); line-height: 1.7; }
+.hero-search {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-xl);
+  padding: 14px 16px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-md);
+}
+@media(max-width:640px){ .hero-search { grid-template-columns: 1fr; border-radius: var(--radius-lg); } }
+.hero-search-label { font-size: 10px; font-weight: 700; color: var(--ink-40); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.hero-search select,
+.hero-search input {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+.hero-search select option { background: var(--card); }
+.hero-search-divider { width: 1px; height: 36px; background: var(--cream-3); margin: auto 8px; }
+@media(max-width:640px){ .hero-search-divider { display: none; } }
+
+.hero-stats { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.hero-stat-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); }
+.hero-stat-lbl { font-size: 12px; color: var(--ink-60); margin-top: 1px; }
+.hero-stat-divider { height: 32px; width: 1.5px; background: var(--cream-3); }
+
+.category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.category-tile {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.category-tile:hover { border-color: var(--green-border); background: var(--green-light); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.category-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+}
+
+/* ==================== HOW IT WORKS ==================== */
+.how-section { padding: 48px 0; border-top: 1.5px solid var(--cream-3); }
+.section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
+.step-card {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  position: relative;
+}
+.step-num {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--cream-3);
+  position: absolute;
+  top: 16px;
+  right: 20px;
+}
+.step-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+
+/* ==================== REPAIRER CARD ==================== */
+.repairer-card {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition);
+}
+.repairer-card:hover { border-color: var(--green-border); box-shadow: var(--shadow-md); }
+.star-rating { display: flex; align-items: center; gap: 3px; }
+
+/* ==================== JOB CARD ==================== */
+.job-row {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: var(--transition);
+}
+.job-row:hover { border-color: var(--cream-2); box-shadow: var(--shadow-sm); }
+
+/* ==================== EVENT CARD ==================== */
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  transition: var(--transition);
+}
+.event-row:hover { border-color: var(--green-border); box-shadow: var(--shadow-sm); }
+.event-date {
+  width: 46px;
+  height: 50px;
+  background: var(--green-light);
+  border: 1.5px solid var(--green-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.event-month { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--green); }
+.event-day { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; color: var(--green); line-height: 1; }
+
+/* ==================== FORUM THREAD ==================== */
+.thread-item { padding: 14px 0; border-bottom: 1px solid var(--cream-2); }
+.thread-item:last-child { border-bottom: none; }
+
+/* ==================== DASHBOARD HEADER ==================== */
+.dash-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+.profile-completeness { min-width: 160px; }
+
+/* ==================== COMMUNITY POINTS ==================== */
+.points-banner {
+  background: linear-gradient(135deg, var(--amber-light) 0%, #f0d9c4 100%);
+  border: 1.5px solid var(--amber-border);
+  border-radius: var(--radius-xl);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+/* ==================== DIY CARD ==================== */
+.diy-card {
+  background: var(--card);
+  border: 1.5px solid var(--cream-3);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+}
+.diy-card:hover { border-color: var(--green-border); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.diy-thumb {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==================== UTILITIES ==================== */
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-col { display: flex; flex-direction: column; }
+.gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; }
+.gap-20 { gap: 20px; } .gap-24 { gap: 24px; }
+.mb-4 { margin-bottom: 4px; } .mb-6 { margin-bottom: 6px; }
+.mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+.mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+.mb-28 { margin-bottom: 28px; } .mb-32 { margin-bottom: 32px; }
+.mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; }
+.fw-500 { font-weight: 500; } .fw-600 { font-weight: 600; }
+.text-green { color: var(--green); } .text-amber { color: var(--amber); }
+.text-ink { color: var(--ink); } .text-muted { color: var(--ink-60); } .text-faint { color: var(--ink-40); }
+.font-display { font-family: var(--font-display); }
+.w-full { width: 100%; }
+.section { margin-bottom: 48px; }
+@media(max-width:640px){ .hide-mobile { display: none!important; } }
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cream-3); border-radius: 3px; }
+
+/* ==================== NAV BAR (inside home page) ==================== */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0 22px;
+  border-bottom: 1.5px solid var(--cream-3);
+  margin-bottom: 0;
+}
+.site-logo { display: flex; align-items: center; gap: 9px; }
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--green);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-wordmark { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--ink); }
+.site-links { display: flex; list-style: none; gap: 24px; }
+.site-links a { font-size: 13px; color: var(--ink-60); text-decoration: none; font-weight: 500; transition: var(--transition); }
+.site-links a:hover { color: var(--ink); }
+.nav-actions { display: flex; gap: 8px; }
+@media(max-width:700px){ .site-links { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="app-wrap">
+
+  <!-- ==================== PAGE NAVIGATION ==================== -->
+  <nav class="page-nav">
+    <button class="page-tab active" onclick="showPage('home',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 6.5L7 2l5 4.5V12a.5.5 0 01-.5.5h-3V9H5.5v3.5h-3A.5.5 0 012 12V6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      Home
+    </button>
+    <button class="page-tab" onclick="showPage('request',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 7h4M7 5v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Repair Request
+    </button>
+    <button class="page-tab" onclick="showPage('dashboard',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="2" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+      Repairer Dashboard
+    </button>
+    <button class="page-tab" onclick="showPage('community',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5" r="2.2" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="4.5" r="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M1 11.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 8c1.7.2 3 1.3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Community
+    </button>
+  </nav>
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <div id="page-home" class="page active">
+
+    <!-- Site Nav -->
+    <nav class="site-nav">
+      <div class="site-logo">
+        <div class="logo-mark">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <path d="M8.5 3C6 3 4 5.2 4 8c0 2.2 1.2 4.1 3 5.1C9.5 14.3 13 12.2 13 8.5c0-1.6-.7-3-1.8-3.8C10.5 3.6 9.5 3 8.5 3z" fill="rgba(255,255,255,.85)"/>
+            <path d="M8.5 8.5c0 2.5-2.5 3.8-2.5 3.8" stroke="rgba(255,255,255,.6)" stroke-width="1.1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">RepairHub</span>
+      </div>
+      <ul class="site-links">
+        <li><a href="#">How It Works</a></li>
+        <li><a href="#">Find Repairers</a></li>
+        <li><a href="#">DIY Guides</a></li>
+        <li><a href="#">Community</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-outline btn-sm">Sign In</button>
+        <button class="btn btn-primary btn-sm" onclick="showPage('request',document.querySelectorAll('.page-tab')[1])">Post a Repair</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero-section">
+      <svg class="hero-bg-blob" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M380,280 C420,340 390,420 320,440 C250,460 150,430 100,360 C50,290 80,180 150,130 C220,80 320,90 370,150 C420,210 340,220 380,280z" fill="var(--green-light)" stroke="var(--green-border)" stroke-width="2"/>
+      </svg>
+      <div class="grid-hero">
+        <div>
+          <div class="hero-label">
+            <span class="badge badge-green">
+              <span class="badge-dot" style="background:var(--green)"></span>
+              Sustainable · Community-driven
+            </span>
+          </div>
+          <h1 class="display hero-headline">Repair.<br><em style="color:var(--green);">Reuse.</em><br>Reconnect.</h1>
+          <p class="hero-sub">Connect with trusted local repairers for electronics, furniture, clothing, and more. Save money, reduce waste, and support your community.</p>
+
+          <!-- Search bar -->
+          <div class="hero-search">
+            <div>
+              <div class="hero-search-label">Category</div>
+              <select>
+                <option>All Categories</option>
+                <option>Electronics</option>
+                <option>Furniture</option>
+                <option>Clothing</option>
+                <option>Bikes</option>
+              </select>
+            </div>
+            <div class="hero-search-divider"></div>
+            <div>
+              <div class="hero-search-label">Your Location</div>
+              <input type="text" placeholder="Enter city or suburb...">
+            </div>
+            <button class="btn btn-primary">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Find
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-num">48,291</div>
+              <div class="hero-stat-lbl">Items repaired</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div>
+              <div class="hero-stat-num">86t</div>
+              <div class="hero-stat-lbl">CO₂ avoided</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div>
+              <div class="hero-stat-num">12,400+</div>
+              <div class="hero-stat-lbl">Local repairers</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category tiles -->
+        <div>
+          <div class="overline mb-16">Browse Categories</div>
+          <div class="category-grid">
+            <div class="category-tile">
+              <div class="category-icon" style="background:var(--blue-light);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="11" rx="2" stroke="var(--blue)" stroke-width="1.3"/><path d="M6.5 14v2.5M13.5 14v2.5M4 16.5h12" stroke="var(--blue)" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="8.5" r="2.5" stroke="var(--blue)" stroke-width="1.2"/></svg>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Electronics</div>
+              <div class="body-xs">2,840 repairers</div>
+            </div>
+            <div class="category-tile">
+              <div class="category-icon" style="background:var(--amber-light);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8.5h10l-1.2 8H6.2L5 8.5z" stroke="var(--amber)" stroke-width="1.3"/><path d="M7.5 8.5V7A2.5 2.5 0 0112.5 7v1.5" stroke="var(--amber)" stroke-width="1.3"/></svg>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Clothing</div>
+              <div class="body-xs">1,920 repairers</div>
+            </div>
+            <div class="category-tile">
+              <div class="category-icon" style="background:var(--green-light);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="11" width="16" height="6" rx="1.5" stroke="var(--green)" stroke-width="1.3"/><path d="M5.5 11V8.5a4.5 4.5 0 019 0V11" stroke="var(--green)" stroke-width="1.3"/></svg>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Furniture</div>
+              <div class="body-xs">1,560 repairers</div>
+            </div>
+            <div class="category-tile">
+              <div class="category-icon" style="background:var(--cream-2);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5.5" cy="14" r="2.5" stroke="var(--ink-60)" stroke-width="1.3"/><circle cx="15" cy="14" r="2.5" stroke="var(--ink-60)" stroke-width="1.3"/><path d="M8 14H11.5l1.5-5 2-3" stroke="var(--ink-60)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">Bikes</div>
+              <div class="body-xs">980 repairers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-section section">
+      <div class="section-header">
+        <div>
+          <div class="overline mb-8">Process</div>
+          <h2 class="heading" style="font-size:1.75rem;">How RepairHub Works</h2>
+        </div>
+        <button class="btn btn-outline btn-sm hide-mobile">Watch Demo</button>
+      </div>
+      <div class="grid-3">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-icon" style="background:var(--green-light);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="2.5" stroke="var(--green)" stroke-width="1.3"/><path d="M10 6.5v7M6.5 10h7" stroke="var(--green)" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="fw-600 mb-6" style="font-size:14px;">Post Your Repair</div>
+          <p class="body-sm">Upload a photo of the damaged item. Our AI analyses the damage and gives an instant cost estimate before you choose a repairer.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-icon" style="background:var(--amber-light);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="8" cy="8" r="5" stroke="var(--amber)" stroke-width="1.3"/><path d="M15 15l-3.5-3.5" stroke="var(--amber)" stroke-width="1.4" stroke-linecap="round"/><path d="M6 8h4M8 6v4" stroke="var(--amber)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="fw-600 mb-6" style="font-size:14px;">Match with Experts</div>
+          <p class="body-sm">Smart matching finds verified local repairers based on skill, distance, rating, and availability. Compare quotes and pick your best fit.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-icon" style="background:var(--blue-light);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5l2 5.5h5.5l-4.5 3.5 1.7 5.5L10 14l-4.7 3 1.7-5.5L2.5 8h5.5z" stroke="var(--blue)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="fw-600 mb-6" style="font-size:14px;">Get It Fixed Safely</div>
+          <p class="body-sm">Pay via escrow — funds are held securely until the repair is complete and you approve the result. No fix, no fee guarantee.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Repairers -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <div class="overline mb-8">Top Rated Near You</div>
+          <h2 class="heading" style="font-size:1.75rem;">Featured Repairers</h2>
+        </div>
+        <button class="btn btn-outline btn-sm hide-mobile">View All</button>
+      </div>
+      <div class="grid-3">
+        <!-- Repairer 1 -->
+        <div class="repairer-card card-hover">
+          <div class="flex-between mb-16">
+            <div class="flex-center gap-10">
+              <div class="avatar avatar-lg">MR</div>
+              <div>
+                <div class="fw-600 mb-4" style="font-size:14px;">Marcus Rivera</div>
+                <span class="badge badge-blue">✓ Verified</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="star-rating" style="justify-content:flex-end;">
+                <svg width="13" height="13" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                <span class="fw-600" style="font-size:13px;">4.9</span>
+              </div>
+              <div class="body-xs mt-4">127 reviews</div>
+            </div>
+          </div>
+          <div class="mb-12">
+            <span class="chip">Electronics</span> <span class="chip">Phones</span> <span class="chip">Tablets</span>
+          </div>
+          <hr class="div">
+          <div class="flex-between">
+            <div>
+              <div class="body-xs">Starting from</div>
+              <div class="font-display" style="font-size:1.3rem;font-weight:500;">$45</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="body-xs mb-6">2.4 km away</div>
+              <button class="btn btn-primary btn-sm">Book Now</button>
+            </div>
+          </div>
+        </div>
+        <!-- Repairer 2 -->
+        <div class="repairer-card card-hover">
+          <div class="flex-between mb-16">
+            <div class="flex-center gap-10">
+              <div class="avatar avatar-lg avatar-amber">SL</div>
+              <div>
+                <div class="fw-600 mb-4" style="font-size:14px;">Sofia Laurent</div>
+                <span class="badge badge-blue">✓ Verified</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="star-rating" style="justify-content:flex-end;">
+                <svg width="13" height="13" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                <span class="fw-600" style="font-size:13px;">4.8</span>
+              </div>
+              <div class="body-xs mt-4">94 reviews</div>
+            </div>
+          </div>
+          <div class="mb-12">
+            <span class="chip">Clothing</span> <span class="chip">Leather</span> <span class="chip">Tailoring</span>
+          </div>
+          <hr class="div">
+          <div class="flex-between">
+            <div>
+              <div class="body-xs">Starting from</div>
+              <div class="font-display" style="font-size:1.3rem;font-weight:500;">$25</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="body-xs mb-6">0.8 km away</div>
+              <button class="btn btn-primary btn-sm">Book Now</button>
+            </div>
+          </div>
+        </div>
+        <!-- Repairer 3 -->
+        <div class="repairer-card card-hover">
+          <div class="flex-between mb-16">
+            <div class="flex-center gap-10">
+              <div class="avatar avatar-lg avatar-blue">AK</div>
+              <div>
+                <div class="fw-600 mb-4" style="font-size:14px;">Aiden Kim</div>
+                <div class="flex gap-6">
+                  <span class="badge badge-blue">✓ Verified</span>
+                  <span class="badge badge-amber">Urgent</span>
+                </div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="star-rating" style="justify-content:flex-end;">
+                <svg width="13" height="13" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                <span class="fw-600" style="font-size:13px;">4.7</span>
+              </div>
+              <div class="body-xs mt-4">68 reviews</div>
+            </div>
+          </div>
+          <div class="mb-12">
+            <span class="chip">Furniture</span> <span class="chip">Wood</span> <span class="chip">Restoration</span>
+          </div>
+          <hr class="div">
+          <div class="flex-between">
+            <div>
+              <div class="body-xs">Starting from</div>
+              <div class="font-display" style="font-size:1.3rem;font-weight:500;">$60</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="body-xs mb-6">4.1 km away</div>
+              <button class="btn btn-primary btn-sm">Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Banner -->
+    <div class="section">
+      <div class="impact-banner">
+        <div class="overline mb-12" style="color:rgba(255,255,255,.55);">Our Impact</div>
+        <h2 class="heading mb-24" style="font-size:1.8rem;color:#fff;">Together, We're Making a Difference</h2>
+        <div class="grid-4 mb-28">
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:500;color:#fff;">48,291</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px;">Items saved from landfill</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:500;color:#fff;">86 t</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px;">CO₂ emissions avoided</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:500;color:#fff;">$1.2M</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px;">Saved vs replacement</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:500;color:#fff;">12,400</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px;">Local jobs supported</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:12px;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:8px;">Monthly goal: 5,000 repairs</div>
+            <div style="height:6px;background:rgba(255,255,255,.15);border-radius:3px;width:260px;overflow:hidden;"><div style="width:72%;height:100%;background:rgba(255,255,255,.7);border-radius:3px;"></div></div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;">3,600 / 5,000 this month</div>
+          </div>
+          <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.25);backdrop-filter:blur(4px);">Join the Movement →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Community Teaser -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <div class="overline mb-8">Community</div>
+          <h2 class="heading" style="font-size:1.75rem;">Learn, Share &amp; Grow</h2>
+        </div>
+      </div>
+      <div class="grid-3 mb-28">
+        <div class="card card-hover">
+          <div class="mb-10"><span class="badge badge-blue">DIY Guides</span></div>
+          <div class="fw-600 mb-8" style="font-size:14px;">Repair It Yourself</div>
+          <p class="body-sm mb-16">200+ step-by-step tutorials for common repairs, free for all members.</p>
+          <button class="btn btn-outline btn-sm">Browse Tutorials</button>
+        </div>
+        <div class="card card-hover">
+          <div class="mb-10"><span class="badge badge-amber">Forum</span></div>
+          <div class="fw-600 mb-8" style="font-size:14px;">Ask the Community</div>
+          <p class="body-sm mb-16">Get advice from thousands of repair hobbyists. Post a question, get answers fast.</p>
+          <button class="btn btn-outline btn-sm">Join Forum</button>
+        </div>
+        <div class="card card-hover">
+          <div class="mb-10"><span class="badge badge-green">Events</span></div>
+          <div class="fw-600 mb-8" style="font-size:14px;">Repair Workshops</div>
+          <p class="body-sm mb-16">Join local repair cafes, bike fix days, and electronics workshops near you.</p>
+          <button class="btn btn-outline btn-sm">Find Events</button>
+        </div>
+      </div>
+
+      <!-- DIY + Forum 2-col -->
+      <div class="grid-2" style="gap:28px;align-items:start;">
+        <!-- Forum -->
+        <div>
+          <div class="flex-between mb-16">
+            <div>
+              <div class="overline mb-4">Community Forum</div>
+              <div class="fw-600" style="font-size:14px;">Recent Discussions</div>
+            </div>
+            <button class="btn btn-primary btn-sm">Ask a Question</button>
+          </div>
+          <div class="card" style="padding:0 20px;">
+            <div class="thread-item">
+              <div class="mb-6"><span class="badge badge-blue">Electronics</span></div>
+              <div class="fw-600 mb-6" style="font-size:13px;">Laptop won't charge even with new cable — any ideas?</div>
+              <div class="flex-center gap-6">
+                <div class="avatar" style="width:18px;height:18px;font-size:8px;">EK</div>
+                <span class="body-xs">Elena K. · 14 replies · 2h ago</span>
+              </div>
+            </div>
+            <div class="thread-item">
+              <div class="mb-6"><span class="badge badge-amber">Clothing</span></div>
+              <div class="fw-600 mb-6" style="font-size:13px;">Best thread type for repairing denim jeans?</div>
+              <div class="flex-center gap-6">
+                <div class="avatar avatar-amber" style="width:18px;height:18px;font-size:8px;">PW</div>
+                <span class="body-xs">Pierre W. · 7 replies · 5h ago</span>
+              </div>
+            </div>
+            <div class="thread-item" style="border-bottom:none;padding-bottom:4px;">
+              <div class="mb-6"><span class="badge badge-green">Furniture</span></div>
+              <div class="fw-600 mb-6" style="font-size:13px;">How to remove a water stain from a hardwood table?</div>
+              <div class="flex-center gap-6">
+                <div class="avatar" style="width:18px;height:18px;font-size:8px;">MO</div>
+                <span class="body-xs">Mia O. · 11 replies · 1d ago</span>
+              </div>
+            </div>
+            <div style="padding:12px 0;border-top:1px solid var(--cream-2);text-align:center;">
+              <button class="btn btn-ghost btn-sm">View All Discussions</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Events -->
+        <div>
+          <div class="flex-between mb-16">
+            <div>
+              <div class="overline mb-4">Local Events</div>
+              <div class="fw-600" style="font-size:14px;">Upcoming Workshops</div>
+            </div>
+            <button class="btn btn-outline btn-sm">All Events</button>
+          </div>
+          <div class="flex-col gap-8">
+            <div class="event-row">
+              <div class="event-date"><div class="event-month">Apr</div><div class="event-day">05</div></div>
+              <div style="flex:1;">
+                <div class="fw-600 mb-4" style="font-size:13px;">Electronics Repair Cafe</div>
+                <div class="body-xs mb-4">Bring broken gadgets — volunteers help you fix them</div>
+                <div class="body-xs text-faint">10am–2pm · Community Centre</div>
+              </div>
+              <button class="btn btn-primary btn-sm" style="align-self:flex-start;">Join</button>
+            </div>
+            <div class="event-row">
+              <div class="event-date"><div class="event-month">Apr</div><div class="event-day">12</div></div>
+              <div style="flex:1;">
+                <div class="fw-600 mb-4" style="font-size:13px;">Fix Your Bike Day</div>
+                <div class="body-xs mb-4">Free bike maintenance workshop for all skill levels</div>
+                <div class="body-xs text-faint">9am–1pm · Riverside Park</div>
+              </div>
+              <button class="btn btn-outline btn-sm" style="align-self:flex-start;">RSVP</button>
+            </div>
+            <div class="event-row">
+              <div class="event-date"><div class="event-month">Apr</div><div class="event-day">19</div></div>
+              <div style="flex:1;">
+                <div class="fw-600 mb-4" style="font-size:13px;">Clothing Upcycling Workshop</div>
+                <div class="body-xs mb-4">Transform old clothes into new fashion pieces</div>
+                <div class="body-xs text-faint">2pm–5pm · Maker Space</div>
+              </div>
+              <button class="btn btn-outline btn-sm" style="align-self:flex-start;">RSVP</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /home -->
+
+  <!-- ==================== REPAIR REQUEST PAGE ==================== -->
+  <div id="page-request" class="page">
+
+    <div class="flex-between mb-28" style="flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="overline mb-6">New Repair Request</div>
+        <h1 class="heading" style="font-size:1.75rem;">Let's Fix It</h1>
+      </div>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="steps-nav mb-32">
+      <div class="step-node">
+        <div class="step-circle step-done" id="sc1">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-label active-label">Describe</div>
+      </div>
+      <div class="step-connector done" id="sl1"></div>
+      <div class="step-node">
+        <div class="step-circle step-todo" id="sc2">2</div>
+        <div class="step-label" id="slbl2">AI Analysis</div>
+      </div>
+      <div class="step-connector" id="sl2"></div>
+      <div class="step-node">
+        <div class="step-circle step-todo" id="sc3">3</div>
+        <div class="step-label" id="slbl3">Choose</div>
+      </div>
+      <div class="step-connector" id="sl3"></div>
+      <div class="step-node">
+        <div class="step-circle step-todo" id="sc4">4</div>
+        <div class="step-label" id="slbl4">Confirm &amp; Pay</div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="rs1">
+      <div class="grid-2" style="gap:28px;align-items:start;">
+        <div>
+          <h2 class="heading mb-20" style="font-size:1.3rem;">Describe your item</h2>
+          <div class="field-group">
+            <label class="field-label">Repair Category</label>
+            <select class="field-input">
+              <option>Select a category...</option>
+              <option>Electronics</option>
+              <option>Furniture</option>
+              <option>Clothing</option>
+              <option>Bikes</option>
+              <option>Appliances</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Item Name / Model</label>
+            <input class="field-input" type="text" placeholder="e.g. Samsung Galaxy S23, IKEA chair...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Describe the Problem</label>
+            <textarea class="field-input" rows="4" placeholder="e.g. Screen cracked in top left corner, touch is unresponsive..."></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Urgency</label>
+              <select class="field-input">
+                <option>Standard (3–5 days)</option>
+                <option>Urgent – same day (+$15)</option>
+                <option>Flexible (7+ days)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Pickup Preference</label>
+              <select class="field-input">
+                <option>I'll drop it off</option>
+                <option>Pickup &amp; Delivery</option>
+                <option>Repairer comes to me</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="heading mb-20" style="font-size:1.3rem;">Upload Photos</h2>
+          <div class="upload-zone mb-14">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="display:block;margin:0 auto 12px;"><rect x="3" y="5" width="30" height="24" rx="3" stroke="var(--green)" stroke-width="1.4"/><circle cx="12" cy="14" r="3" stroke="var(--green)" stroke-width="1.2"/><path d="M3 25l8-7 6 5.5 4-4 8 5.5" stroke="var(--green)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="fw-600 mb-4" style="font-size:13px;color:var(--green);">Drag photos here or click to upload</div>
+            <div class="body-xs mb-12">JPG, PNG — up to 10MB each</div>
+            <button class="btn btn-primary btn-sm">Choose Files</button>
+          </div>
+          <div class="ai-card">
+            <div class="ai-badge">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 5H11L8 7.5l1 4L6 9 3 11.5l1-4L1 5h3.5z" fill="white"/></svg>
+              AI Damage Detection
+            </div>
+            <p class="body-sm" style="color:var(--green);">Upload a clear photo — our AI will identify the damage type and estimate the repair cost instantly before you choose a repairer.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;gap:8px;margin-top:24px;">
+        <button class="btn btn-outline">Save Draft</button>
+        <button class="btn btn-primary" onclick="rStep(2)">Analyse with AI →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="rs2" style="display:none;">
+      <h2 class="heading mb-20" style="font-size:1.3rem;">AI Analysis Results</h2>
+      <div class="grid-2" style="gap:28px;align-items:start;margin-bottom:20px;">
+        <div class="ai-card">
+          <div class="flex-center gap-10 mb-20">
+            <div style="width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 5H11L8 7.5l1 4L6 9 3 11.5l1-4L1 5h3.5z" fill="white"/></svg>
+            </div>
+            <div>
+              <div class="fw-600" style="font-size:13px;color:var(--green);">Damage Detected</div>
+              <div style="font-size:11px;color:var(--green-mid);">Based on uploaded photo</div>
+            </div>
+          </div>
+          <div class="card-cream mb-8" style="border-radius:var(--radius-md);padding:12px;">
+            <div class="body-xs mb-4">Damage type</div>
+            <div class="fw-600">Cracked screen + LCD damage</div>
+          </div>
+          <div class="card-cream mb-8" style="border-radius:var(--radius-md);padding:12px;">
+            <div class="body-xs mb-6">Severity</div>
+            <div class="flex-center gap-8">
+              <div class="progress" style="flex:1;"><div class="progress-fill progress-amber" style="width:65%;"></div></div>
+              <span class="fw-600" style="font-size:12px;color:var(--amber);">Moderate</span>
+            </div>
+          </div>
+          <div class="card-cream" style="border-radius:var(--radius-md);padding:12px;">
+            <div class="body-xs mb-4">Estimated repair time</div>
+            <div class="fw-600">1–2 hours</div>
+          </div>
+        </div>
+        <div>
+          <div class="card mb-12">
+            <div class="overline mb-12">Cost Estimate</div>
+            <div class="flex-between mb-10">
+              <span class="body-sm">Repair cost range</span>
+              <span class="fw-600" style="font-size:15px;">$80 – $130</span>
+            </div>
+            <div class="flex-between mb-10">
+              <span class="body-xs">Parts &amp; labour</span>
+              <span class="body-xs">Included</span>
+            </div>
+            <div class="flex-between">
+              <span class="body-xs">Platform fee (5%)</span>
+              <span class="body-xs">$4.00 – $6.50</span>
+            </div>
+          </div>
+          <div class="card" style="border-color:var(--green-border);">
+            <div class="fw-600 mb-12" style="font-size:13px;">Repair vs Replace</div>
+            <div class="flex-between mb-10">
+              <div>
+                <div class="mb-4"><span class="badge badge-green">Repair</span></div>
+                <div class="font-display" style="font-size:1.4rem;font-weight:500;color:var(--green);">$80–$130</div>
+              </div>
+              <div style="color:var(--ink-40);font-size:18px;padding:0 12px;">vs</div>
+              <div style="text-align:right;">
+                <div class="mb-4"><span class="badge badge-gray">New Phone</span></div>
+                <div class="font-display" style="font-size:1.4rem;font-weight:500;">$850+</div>
+              </div>
+            </div>
+            <div class="card-green" style="border-radius:var(--radius-md);padding:10px 12px;font-size:12px;color:var(--green);">
+              ♻️ Repairing saves up to $770 and prevents 14 kg of e-waste.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;gap:8px;">
+        <button class="btn btn-outline" onclick="rStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="rStep(3)">Find Repairers →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="rs3" style="display:none;">
+      <div class="flex-between mb-20">
+        <h2 class="heading" style="font-size:1.3rem;">3 repairers matched</h2>
+        <select class="field-input" style="width:auto;font-size:12px;padding:7px 12px;">
+          <option>Best Match</option>
+          <option>Lowest Price</option>
+          <option>Nearest</option>
+          <option>Highest Rated</option>
+        </select>
+      </div>
+      <div class="flex-col gap-10 mb-20">
+        <!-- Best match -->
+        <div class="card" style="border-color:var(--green-border);">
+          <div class="flex-between">
+            <div class="flex-center gap-12">
+              <div class="avatar avatar-lg">MR</div>
+              <div>
+                <div class="flex-center gap-8 mb-6">
+                  <span class="fw-600" style="font-size:14px;">Marcus Rivera</span>
+                  <span class="badge badge-blue">✓ Verified</span>
+                  <span class="badge badge-green">Best Match</span>
+                </div>
+                <div class="flex-center gap-6 mb-8">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span class="fw-600" style="font-size:12px;">4.9</span>
+                  <span class="body-xs">(127 reviews) · 2.4 km · Available today</span>
+                </div>
+                <div><span class="chip">Electronics</span> <span class="chip">Screen Repair</span> <span class="chip">Phones</span></div>
+              </div>
+            </div>
+            <div style="text-align:right;min-width:110px;flex-shrink:0;">
+              <div class="body-xs mb-4">Quote</div>
+              <div class="font-display" style="font-size:1.5rem;font-weight:500;">$95</div>
+              <div class="body-xs mb-10">7-day warranty</div>
+              <button class="btn btn-primary btn-sm" onclick="rStep(4)">Select →</button>
+            </div>
+          </div>
+        </div>
+        <!-- Second option -->
+        <div class="card">
+          <div class="flex-between">
+            <div class="flex-center gap-12">
+              <div class="avatar avatar-lg avatar-amber">PT</div>
+              <div>
+                <div class="flex-center gap-8 mb-6">
+                  <span class="fw-600" style="font-size:14px;">Priya Tanaka</span>
+                  <span class="badge badge-blue">✓ Verified</span>
+                </div>
+                <div class="flex-center gap-6 mb-8">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span class="fw-600" style="font-size:12px;">4.7</span>
+                  <span class="body-xs">(82 reviews) · 4.1 km · Available tomorrow</span>
+                </div>
+                <div><span class="chip">Electronics</span> <span class="chip">iPhones</span> <span class="chip">Samsung</span></div>
+              </div>
+            </div>
+            <div style="text-align:right;min-width:110px;flex-shrink:0;">
+              <div class="body-xs mb-4">Quote</div>
+              <div class="font-display" style="font-size:1.5rem;font-weight:500;">$110</div>
+              <div class="body-xs mb-10">30-day warranty</div>
+              <button class="btn btn-outline btn-sm" onclick="rStep(4)">Select →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;gap:8px;">
+        <button class="btn btn-outline" onclick="rStep(2)">← Back</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="rs4" style="display:none;">
+      <div class="grid-2" style="gap:28px;align-items:start;">
+        <div>
+          <h2 class="heading mb-20" style="font-size:1.3rem;">Confirm Booking</h2>
+          <div class="card mb-14">
+            <div class="overline mb-14">Selected Repairer</div>
+            <div class="flex-center gap-12 mb-16">
+              <div class="avatar avatar-lg">MR</div>
+              <div>
+                <div class="fw-600 mb-4" style="font-size:14px;">Marcus Rivera</div>
+                <div class="body-sm">Screen repair · $95 · 7-day warranty</div>
+              </div>
+            </div>
+            <hr class="div">
+            <div class="field-group">
+              <label class="field-label">Preferred Date</label>
+              <input class="field-input" type="date">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Notes for repairer (optional)</label>
+              <textarea class="field-input" rows="3" placeholder="Any special instructions..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="heading mb-20" style="font-size:1.3rem;">Secure Payment</h2>
+          <div class="card mb-10">
+            <div class="overline mb-14">Order Summary</div>
+            <div class="flex-between mb-10">
+              <span class="body-sm">Screen repair (Marcus Rivera)</span>
+              <span class="fw-600">$95.00</span>
+            </div>
+            <div class="flex-between mb-10">
+              <span class="body-xs">Platform service fee</span>
+              <span class="body-xs">$4.75</span>
+            </div>
+            <hr class="div">
+            <div class="flex-between">
+              <span class="fw-600">Total</span>
+              <span class="font-display" style="font-size:1.4rem;font-weight:500;">$99.75</span>
+            </div>
+          </div>
+          <div class="card card-green mb-14" style="border-color:var(--green-border);">
+            <div class="flex-center gap-8">
+              <div style="width:28px;height:28px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.4 4H13L9.5 7.7l1.3 4L7 9.5 3.2 11.7l1.3-4L1 5.5h4.6z" fill="white"/></svg>
+              </div>
+              <div>
+                <div class="fw-600 mb-4" style="font-size:12px;color:var(--green);">Escrow Protection</div>
+                <div style="font-size:11px;color:var(--green-mid);">Payment held securely. Released only after you confirm the repair is complete.</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" style="margin-bottom:8px;">Confirm &amp; Pay $99.75</button>
+          <div class="body-xs" style="text-align:center;color:var(--ink-40);">🛡 No fix, no fee guarantee · Secure checkout</div>
+        </div>
+      </div>
+      <div class="flex" style="gap:8px;margin-top:16px;">
+        <button class="btn btn-outline" onclick="rStep(3)">← Back</button>
+      </div>
+    </div>
+
+  </div><!-- /request -->
+
+  <!-- ==================== DASHBOARD PAGE ==================== -->
+  <div id="page-dashboard" class="page">
+
+    <!-- Header -->
+    <div class="dash-header">
+      <div>
+        <div class="body-sm mb-4">Good morning,</div>
+        <h1 class="heading mb-10" style="font-size:1.9rem;">Marcus Rivera</h1>
+        <div class="flex gap-8">
+          <span class="badge badge-blue">✓ Verified Repairer</span>
+          <span class="badge badge-green">Top Rated</span>
+        </div>
+      </div>
+      <div class="flex gap-10" style="align-items:center;">
+        <div class="stat-card profile-completeness" style="padding:14px 18px;text-align:center;">
+          <div class="overline mb-6">Profile</div>
+          <div class="fw-600 mb-8" style="font-size:1.1rem;">85%</div>
+          <div class="progress" style="width:100px;"><div class="progress-fill progress-green" style="width:85%;"></div></div>
+        </div>
+        <button class="btn btn-primary">
+          <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);display:inline-block;"></span>
+          Go Online
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid-4 section">
+      <div class="stat-card">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value">$1,240</div>
+        <div class="stat-delta">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 7L4 4l2.5 2.5 3-4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          +18% vs last month
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Jobs Done</div>
+        <div class="stat-value">23</div>
+        <div class="stat-delta">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 7L4 4l2.5 2.5 3-4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          +3 this week
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Rating</div>
+        <div class="flex-center gap-8" style="align-items:baseline;gap:6px;">
+          <div class="stat-value">4.9</div>
+          <svg width="16" height="16" viewBox="0 0 14 14"><path d="M7 1.5l1.5 4H13L8.9 8l1.4 4.3L7 9.8l-3.3 2.5L5.1 8 1 5.5h4.5z" fill="var(--amber-mid)"/></svg>
+        </div>
+        <div class="body-xs mt-4">127 total reviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Jobs</div>
+        <div class="stat-value">3</div>
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:6px;">2 awaiting pickup</div>
+      </div>
+    </div>
+
+    <!-- Active Jobs -->
+    <div class="section">
+      <div class="flex-between mb-16">
+        <div class="fw-600" style="font-size:14px;">Active Jobs</div>
+        <button class="btn btn-outline btn-sm">View All</button>
+      </div>
+      <div class="flex-col gap-8">
+        <div class="job-row">
+          <div class="flex-center gap-12" style="flex:1;min-width:0;">
+            <div class="avatar avatar-md">JL</div>
+            <div style="min-width:0;">
+              <div class="fw-600 mb-4" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">James Liu · iPhone 14 screen crack</div>
+              <div class="flex gap-8 flex-wrap">
+                <span class="badge badge-amber">In Progress</span>
+                <span class="body-xs">Due today · $95 · 7-day warranty</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-8" style="flex-shrink:0;">
+            <button class="btn btn-outline btn-sm">Message</button>
+            <button class="btn btn-primary btn-sm">Mark Done</button>
+          </div>
+        </div>
+        <div class="job-row">
+          <div class="flex-center gap-12" style="flex:1;min-width:0;">
+            <div class="avatar avatar-md avatar-amber">AN</div>
+            <div style="min-width:0;">
+              <div class="fw-600 mb-4" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Amara Nwosu · Laptop keyboard replacement</div>
+              <div class="flex gap-8 flex-wrap">
+                <span class="badge badge-blue">Awaiting Pickup</span>
+                <span class="body-xs">Today 3pm · $120</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-8" style="flex-shrink:0;">
+            <button class="btn btn-outline btn-sm">Message</button>
+            <button class="btn btn-outline btn-sm">Details</button>
+          </div>
+        </div>
+        <div class="job-row">
+          <div class="flex-center gap-12" style="flex:1;min-width:0;">
+            <div class="avatar avatar-md avatar-blue">TS</div>
+            <div style="min-width:0;">
+              <div class="fw-600 mb-4" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tom Sørensen · iPad Pro charging port</div>
+              <div class="flex gap-8 flex-wrap">
+                <span class="badge badge-gray">Pending Acceptance</span>
+                <span class="body-xs">New · 45 mins ago · $75</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-8" style="flex-shrink:0;">
+            <button class="btn btn-outline btn-sm">Decline</button>
+            <button class="btn btn-primary btn-sm">Accept</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job History -->
+    <div class="section">
+      <div class="flex-between mb-16">
+        <div class="fw-600" style="font-size:14px;">Recent Job History</div>
+        <button class="btn btn-outline btn-sm">Export CSV</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Item</th>
+              <th>Date</th>
+              <th>Earned</th>
+              <th>Rating</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-500">Yuki Tanaka</td>
+              <td class="text-muted">Samsung Galaxy · screen</td>
+              <td class="text-muted">Mar 28</td>
+              <td class="fw-600">$85</td>
+              <td>
+                <div class="flex-center gap-4">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span style="font-size:12px;font-weight:600;">5.0</span>
+                </div>
+              </td>
+              <td><span class="badge badge-green">Completed</span></td>
+            </tr>
+            <tr>
+              <td class="fw-500">Chen Wei</td>
+              <td class="text-muted">MacBook Pro · battery</td>
+              <td class="text-muted">Mar 25</td>
+              <td class="fw-600">$140</td>
+              <td>
+                <div class="flex-center gap-4">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span style="font-size:12px;font-weight:600;">4.8</span>
+                </div>
+              </td>
+              <td><span class="badge badge-green">Completed</span></td>
+            </tr>
+            <tr>
+              <td class="fw-500">Fatima Al-Rashid</td>
+              <td class="text-muted">iPhone 13 · camera</td>
+              <td class="text-muted">Mar 22</td>
+              <td class="fw-600">$110</td>
+              <td>
+                <div class="flex-center gap-4">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span style="font-size:12px;font-weight:600;">5.0</span>
+                </div>
+              </td>
+              <td><span class="badge badge-green">Completed</span></td>
+            </tr>
+            <tr>
+              <td class="fw-500">Roberto Greco</td>
+              <td class="text-muted">Pixel 7 · speaker</td>
+              <td class="text-muted">Mar 18</td>
+              <td class="fw-600">$65</td>
+              <td>
+                <div class="flex-center gap-4">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1l1.2 3.7H11L7.9 6.9l1.2 3.7L6 8.4l-3.1 2.2L4.1 6.9 1 4.7h3.8z" fill="var(--amber-mid)"/></svg>
+                  <span style="font-size:12px;font-weight:600;">4.7</span>
+                </div>
+              </td>
+              <td><span class="badge badge-green">Completed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /dashboard -->
+
+  <!-- ==================== COMMUNITY PAGE ==================== -->
+  <div id="page-community" class="page">
+
+    <!-- Header -->
+    <div style="padding-bottom:24px;border-bottom:1.5px solid var(--cream-3);margin-bottom:32px;">
+      <div class="overline mb-8">RepairHub Community</div>
+      <div class="flex-between" style="flex-wrap:wrap;gap:12px;">
+        <h1 class="heading" style="font-size:1.9rem;">Learn. Connect. Repair.</h1>
+        <span class="badge badge-green">
+          <span class="badge-dot" style="background:var(--green);"></span>
+          2,840 online
+        </span>
+      </div>
+    </div>
+
+    <!-- Green Points Banner -->
+    <div class="points-banner mb-32">
+      <div class="flex-center gap-16">
+        <div style="width:50px;height:50px;background:var(--amber);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="24" height="24" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.5H18L13 11l1.8 5.5L10 13l-4.8 3.5L7 11 2 7.5h6.2z" fill="rgba(255,255,255,.9)"/></svg>
+        </div>
+        <div>
+          <div class="fw-600 mb-6" style="font-size:15px;color:var(--amber);">Your Green Points: 840</div>
+          <div class="progress" style="width:200px;margin-bottom:5px;"><div class="progress-fill progress-amber" style="width:67%;"></div></div>
+          <div style="font-size:11px;color:var(--amber-mid);">160 pts to Silver Tier · Unlock 10% discount</div>
+        </div>
+      </div>
+      <button class="btn btn-amber">Redeem Points</button>
+    </div>
+
+    <!-- DIY Guides -->
+    <div class="section">
+      <div class="flex-between mb-16">
+        <div>
+          <div class="overline mb-4">DIY Guides</div>
+          <div class="fw-600" style="font-size:14px;">Popular Tutorials</div>
+        </div>
+        <button class="btn btn-outline btn-sm">Browse All 200+</button>
+      </div>
+      <div class="grid-3">
+        <div class="diy-card">
+          <div class="diy-thumb" style="background:var(--blue-light);">
+            <svg width="36" height="36" viewBox="0 0 30 30" fill="none"><rect x="5" y="7" width="20" height="13" rx="1.5" stroke="var(--blue)" stroke-width="1.3"/><path d="M10 20v2M20 20v2M8 22h14" stroke="var(--blue)" stroke-width="1.3" stroke-linecap="round"/><circle cx="15" cy="13.5" r="2.5" stroke="var(--blue)" stroke-width="1.2"/></svg>
+          </div>
+          <div style="padding:14px 16px;">
+            <div class="flex gap-6 mb-8"><span class="badge badge-blue">Electronics</span><span class="badge badge-gray">Beginner</span></div>
+            <div class="fw-600 mb-4" style="font-size:13px;">Replace a Phone Battery</div>
+            <p class="body-xs mb-12">Safely replace your smartphone battery at home with this step-by-step guide.</p>
+            <div class="flex-between"><span class="body-xs text-faint">12 min · Video</span><button class="btn btn-outline btn-sm">Watch</button></div>
+          </div>
+        </div>
+        <div class="diy-card">
+          <div class="diy-thumb" style="background:var(--amber-light);">
+            <svg width="36" height="36" viewBox="0 0 30 30" fill="none"><path d="M10 7h10l2 7H8L10 7z" stroke="var(--amber-mid)" stroke-width="1.3"/><path d="M8 14l2 10h10l2-10" stroke="var(--amber-mid)" stroke-width="1.3"/><path d="M14 18l1.5 3L17 18" stroke="var(--amber-mid)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <div style="padding:14px 16px;">
+            <div class="flex gap-6 mb-8"><span class="badge badge-amber">Clothing</span><span class="badge badge-gray">Easy</span></div>
+            <div class="fw-600 mb-4" style="font-size:13px;">Mend a Torn Seam</div>
+            <p class="body-xs mb-12">Basic hand-sewing techniques to repair ripped seams and extend clothing life.</p>
+            <div class="flex-between"><span class="body-xs text-faint">8 min · Video</span><button class="btn btn-outline btn-sm">Watch</button></div>
+          </div>
+        </div>
+        <div class="diy-card">
+          <div class="diy-thumb" style="background:var(--green-light);">
+            <svg width="36" height="36" viewBox="0 0 30 30" fill="none"><rect x="6" y="18" width="18" height="6" rx="1.3" stroke="var(--green)" stroke-width="1.3"/><path d="M10 18v-4a5 5 0 0110 0v4" stroke="var(--green)" stroke-width="1.3"/><circle cx="15" cy="21" r="1.5" fill="var(--green)"/></svg>
+          </div>
+          <div style="padding:14px 16px;">
+            <div class="flex gap-6 mb-8"><span class="badge badge-green">Furniture</span><span class="badge badge-gray">Intermediate</span></div>
+            <div class="fw-600 mb-4" style="font-size:13px;">Fix a Wobbly Chair Leg</div>
+            <p class="body-xs mb-12">Diagnose and repair loose chair legs using basic woodworking tools and techniques.</p>
+            <div class="flex-between"><span class="body-xs text-faint">15 min · Text</span><button class="btn btn-outline btn-sm">Read</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forum + Events -->
+    <div class="grid-2" style="gap:28px;align-items:start;">
+      <!-- Forum -->
+      <div>
+        <div class="flex-between mb-16">
+          <div>
+            <div class="overline mb-4">Community Forum</div>
+            <div class="fw-600" style="font-size:14px;">Recent Discussions</div>
+          </div>
+          <button class="btn btn-primary btn-sm">Ask a Question</button>
+        </div>
+        <div class="card" style="padding:0 20px;">
+          <div class="thread-item">
+            <div class="mb-6"><span class="badge badge-blue">Electronics</span></div>
+            <div class="fw-600 mb-6" style="font-size:13px;">Laptop won't charge even with new cable — any ideas?</div>
+            <div class="flex-center gap-6">
+              <div class="avatar" style="width:18px;height:18px;font-size:8px;">EK</div>
+              <span class="body-xs">Elena K. · 14 replies · 2h ago</span>
+            </div>
+          </div>
+          <div class="thread-item">
+            <div class="mb-6"><span class="badge badge-amber">Clothing</span></div>
+            <div class="fw-600 mb-6" style="font-size:13px;">Best thread type for repairing denim jeans?</div>
+            <div class="flex-center gap-6">
+              <div class="avatar avatar-amber" style="width:18px;height:18px;font-size:8px;">PW</div>
+              <span class="body-xs">Pierre W. · 7 replies · 5h ago</span>
+            </div>
+          </div>
+          <div class="thread-item" style="border-bottom:none;padding-bottom:4px;">
+            <div class="mb-6"><span class="badge badge-green">Furniture</span></div>
+            <div class="fw-600 mb-6" style="font-size:13px;">How to remove a water stain from a hardwood table?</div>
+            <div class="flex-center gap-6">
+              <div class="avatar" style="width:18px;height:18px;font-size:8px;">MO</div>
+              <span class="body-xs">Mia O. · 11 replies · 1d ago</span>
+            </div>
+          </div>
+          <div style="padding:12px 0;border-top:1px solid var(--cream-2);text-align:center;">
+            <button class="btn btn-ghost btn-sm">View All Discussions</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div>
+        <div class="flex-between mb-16">
+          <div>
+            <div class="overline mb-4">Local Events</div>
+            <div class="fw-600" style="font-size:14px;">Upcoming Workshops</div>
+          </div>
+          <button class="btn btn-outline btn-sm">All Events</button>
+        </div>
+        <div class="flex-col gap-8">
+          <div class="event-row">
+            <div class="event-date"><div class="event-month">Apr</div><div class="event-day">05</div></div>
+            <div style="flex:1;">
+              <div class="fw-600 mb-4" style="font-size:13px;">Electronics Repair Cafe</div>
+              <div class="body-xs mb-4">Bring broken gadgets — volunteers help you fix them</div>
+              <div class="body-xs text-faint">10am–2pm · Community Centre</div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-start;">Join</button>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="event-month">Apr</div><div class="event-day">12</div></div>
+            <div style="flex:1;">
+              <div class="fw-600 mb-4" style="font-size:13px;">Fix Your Bike Day</div>
+              <div class="body-xs mb-4">Free bike maintenance workshop for all skill levels</div>
+              <div class="body-xs text-faint">9am–1pm · Riverside Park</div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="align-self:flex-start;">RSVP</button>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="event-month">Apr</div><div class="event-day">19</div></div>
+            <div style="flex:1;">
+              <div class="fw-600 mb-4" style="font-size:13px;">Clothing Upcycling Workshop</div>
+              <div class="body-xs mb-4">Transform old clothes into new fashion pieces</div>
+              <div class="body-xs text-faint">2pm–5pm · Maker Space</div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="align-self:flex-start;">RSVP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /community -->
+
+</div><!-- /app-wrap -->
+
+<script>
+// ==================== PAGE SWITCHING ====================
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ==================== REPAIR STEPS ====================
+function rStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('rs' + i);
+    if (el) el.style.display = i === n ? '' : 'none';
+
+    const sc = document.getElementById('sc' + i);
+    if (sc) {
+      sc.className = 'step-circle ' + (i < n ? 'step-done' : i === n ? 'step-cur' : 'step-todo');
+      if (i < n) {
+        sc.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      } else {
+        sc.textContent = i;
+      }
+    }
+
+    const sl = document.getElementById('sl' + i);
+    if (sl) sl.className = 'step-connector ' + (i < n ? 'done' : '');
+
+    const lbl = document.getElementById('slbl' + i);
+    if (lbl) lbl.className = 'step-label ' + (i === n ? 'active-label' : '');
+  }
+}
+
+// ==================== INIT ====================
+window.addEventListener('load', function() {
+  showPage('home', document.querySelector('.page-tab'));
+  // Counter animation for hero stats
+  animateCounters();
+});
+
+function animateCounters() {
+  // Simple stat fade-in on first load — no numbers to count here
+  // (counters are static in this build; in production, hook to IntersectionObserver)
+}
+</script>
+</body>
+</html>
